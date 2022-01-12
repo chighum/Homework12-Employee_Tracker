@@ -68,27 +68,41 @@ const viewAllEmployees = () => {
   console.clear();
   db.query(
     `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id ORDER BY employee.id`,
-    (err, response) => {
+    (err, data) => {
       if (err) throw err;
-      console.table("Total Staff:", response);
+      console.table("Total Staff:", data);
     }
   );
-  startQuestions();
+  //startQuestions();
 };
 
-let role = [];
+let roleTitles = [];
 
-const getRoles = () => {
+const getRoleTitles = () => {
   db.query("SELECT title FROM role", function (err, results) {
     if (err) throw err;
     for (let i = 0; i < results.length; i++) {
-      role.push(results[i].title);
+      roleTitles.push(results[i].title);
     }
-    return role;
+    return roleTitles;
   });
 };
 
-getRoles();
+getRoleTitles();
+
+let roleIDs = [];
+
+const getRoleIDs = () => {
+  db.query("SELECT id FROM role", function (err, results) {
+    if (err) throw err;
+    for (let i = 0; i < results.length; i++) {
+      roleIDs.push(results[i].title);
+    }
+    return roleIDs;
+  });
+};
+
+getRoleIDs();
 
 let managers = [];
 
@@ -121,7 +135,7 @@ const addEmployeeQuestions = [
     type: "list",
     message: "What is the employee's role",
     name: "role",
-    choices: role,
+    choices: roleTitles,
   },
   {
     type: "list",
@@ -142,10 +156,10 @@ const addEmployee = () => {
     });
     db.query(
       `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id ORDER BY employee.id`,
-      (err, response) => {
+      (err, data) => {
         if (err) throw err;
 
-        console.table("Total Staff:", response);
+        console.table("Total Staff:", data);
       }
     );
   });
@@ -156,9 +170,9 @@ const viewAllRoles = () => {
   console.clear();
   db.query(
     `SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id ORDER BY role.id`,
-    (err, response) => {
+    (err, data) => {
       if (err) throw err;
-      console.table("All Roles:", response);
+      console.table("All Roles:", data);
     }
   );
 };
@@ -199,32 +213,39 @@ const addRoleQuestions = [
 const addRole = () => {
   console.clear();
   inquirer.prompt(addRoleQuestions).then((response) => {
+    let departmentID;
+    db.query(
+      `SELECT id FROM department WHERE name = '${response.department}'`,
+      function (err, results) {
+        if (err) throw err;
+        departmentID = results[0].id;
+        return departmentID;
+      }
+    );
     db.query("INSERT INTO role SET ?", {
       title: response.title,
       salary: response.salary,
-      department_id: response.department,
+      department_id: departmentID,
     });
     db.query(
       `SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id ORDER BY role.id`,
-      (err, response) => {
+      (err, data) => {
         if (err) throw err;
 
-        console.table("All Roles:", response);
+        console.table("All Roles:", data);
       }
     );
   });
   //startQuestions();
 };
 
-// const updateEmployeeRole = () => {};
-
 const viewAllDepartments = () => {
   console.clear();
   db.query(
     `SELECT id, name FROM department ORDER BY department.id`,
-    (err, response) => {
+    (err, data) => {
       if (err) throw err;
-      console.table("All Departments:", response);
+      console.table("All Departments:", data);
     }
   );
   //startQuestions();
@@ -246,10 +267,10 @@ const addDepartment = () => {
     });
     db.query(
       `SELECT department.id, department.name FROM department ORDER BY department.id`,
-      (err, response) => {
+      (err, data) => {
         if (err) throw err;
 
-        console.table("All Departments:", response);
+        console.table("All Departments:", data);
       }
     );
     //startQuestions();
@@ -284,16 +305,41 @@ const updateEmployeeQuestions = [
     type: "list",
     message: "What is the employee's new role?",
     name: "role",
-    choices: role,
+    choices: roleTitles,
   },
 ];
 
+let roleID;
+let first_name;
+let last_name;
+
 const updateEmployeeRole = () => {
-  inquirer.prompt(updateEmployeeQuestions).then((response) => {
-    let first_name = response.employee.split(" ")[0];
-    let last_name = response.employee.split(" ")[1];
-    db.query(
-      `UPDATE employee SET role_id = ${response.role} WHERE first_name = ${first_name} AND last_name = ${last_name}`
-    );
-  });
+  inquirer
+    .prompt(updateEmployeeQuestions)
+    .then((response) => {
+      let data = [];
+      let first_name = response.employee.split(" ")[0];
+      let last_name = response.employee.split(" ")[1];
+      data.push(first_name);
+      data.push(last_name);
+
+      db.query(
+        `SELECT id FROM role WHERE title = '${response.role}'`,
+        function (err, results) {
+          console.log("RESULTS:", results);
+          if (err) throw err;
+          for (let i = 0; i < results.length; i++) {
+            data.push();
+          }
+          return data;
+        }
+      );
+      return data;
+    })
+    .then((data) => {
+      console.log(data);
+      db.query(
+        `UPDATE employee SET role_id = ${data.roleID} WHERE first_name = '${data.first_name}' AND last_name = '${data.last_name}'`
+      );
+    });
 };
