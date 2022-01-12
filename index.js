@@ -70,7 +70,6 @@ const viewAllEmployees = () => {
     `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id ORDER BY employee.id`,
     (err, response) => {
       if (err) throw err;
-      console.log("\n");
       console.table("Total Staff:", response);
     }
   );
@@ -115,7 +114,7 @@ const addEmployee = () => {
       `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id ORDER BY employee.id`,
       (err, response) => {
         if (err) throw err;
-        console.log("\n");
+
         console.table("Total Staff:", response);
       }
     );
@@ -129,7 +128,6 @@ const viewAllRoles = () => {
     `SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id ORDER BY role.id`,
     (err, response) => {
       if (err) throw err;
-      console.log("\n");
       console.table("All Roles:", response);
     }
   );
@@ -166,7 +164,7 @@ const addRole = () => {
       `SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id ORDER BY role.id`,
       (err, response) => {
         if (err) throw err;
-        console.log("\n");
+
         console.table("All Roles:", response);
       }
     );
@@ -182,7 +180,6 @@ const viewAllDepartments = () => {
     `SELECT department.id, department.name FROM department ORDER BY department.id`,
     (err, response) => {
       if (err) throw err;
-      console.log("\n");
       console.table("All Departments:", response);
     }
   );
@@ -207,7 +204,7 @@ const addDepartment = () => {
       `SELECT department.id, department.name FROM department ORDER BY department.id`,
       (err, response) => {
         if (err) throw err;
-        console.log("\n");
+
         console.table("All Departments:", response);
       }
     );
