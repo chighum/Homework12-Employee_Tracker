@@ -17,7 +17,7 @@ This is a command-line content management system designed to manage a company's 
 
 ## Installation
 
-Download this repository, run npm i to install the packages, and then run node index.js to start the application.
+Download this repository, run npm i to install the necessary packages, and then run node index.js to start the application.
 
 ## Usage
 
