@@ -1,7 +1,5 @@
-const { stat } = require("fs");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const { start } = require("repl");
 require("console.table");
 
 // Connect to database
@@ -285,6 +283,7 @@ const addRole = () => {
       choices: departmentNames,
     },
   ];
+
   console.clear();
   inquirer
     .prompt(addRoleQuestions)
