@@ -67,8 +67,6 @@ const startQuestions = () => {
       }
     });
 };
-// call the function to initialize the app
-startQuestions();
 
 // function to view all employees, returning the data as a table
 const viewAllEmployees = () => {
@@ -80,12 +78,13 @@ const viewAllEmployees = () => {
       console.table("Total Staff:", data);
     }
   );
-  startQuestions();
+  init();
 };
 
 // function to get all role titles from database in one array
 let roleTitles = [];
 const getRoleTitles = () => {
+  roleTitles = [];
   db.query("SELECT title FROM role ORDER BY id", function (err, results) {
     if (err) throw err;
     for (let i = 0; i < results.length; i++) {
@@ -94,11 +93,11 @@ const getRoleTitles = () => {
     return roleTitles;
   });
 };
-getRoleTitles();
 
 // function to get all role IDs from database in one array
 let roleIDs = [];
 const getRoleIDs = () => {
+  roleIDs = [];
   db.query("SELECT id FROM role ORDER BY id", function (err, results) {
     if (err) throw err;
     for (let i = 0; i < results.length; i++) {
@@ -107,11 +106,11 @@ const getRoleIDs = () => {
     return roleIDs;
   });
 };
-getRoleIDs();
 
 // function to get all manager names from database in one array
 let managerNames = [];
 const getManagerNames = () => {
+  managerNames = [];
   db.query(
     `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL ORDER BY id`,
     function (err, results) {
@@ -123,11 +122,11 @@ const getManagerNames = () => {
     }
   );
 };
-getManagerNames();
 
 // function to get all manager IDs from database in one array
 let managerIDs = [];
 const getManagerIDs = () => {
+  managerIDs = [];
   db.query(
     `SELECT id FROM employee WHERE manager_id IS NULL ORDER BY id`,
     function (err, results) {
@@ -139,7 +138,6 @@ const getManagerIDs = () => {
     }
   );
 };
-getManagerIDs();
 
 // questions that will be presented to user after they select "Add Employee" option
 const addEmployeeQuestions = [
@@ -211,7 +209,7 @@ const addEmployee = () => {
         }
       );
     })
-    .then(() => startQuestions());
+    .then(() => init());
 };
 
 // function to view all roles with appropriate table join on department id
@@ -224,12 +222,13 @@ const viewAllRoles = () => {
       console.table("All Roles:", data);
     }
   );
-  startQuestions();
+  init();
 };
 
 // function to get all department names from database in one array
 let departmentNames = [];
 const getDepartmentNames = () => {
+  departmentNames = [];
   db.query("SELECT name FROM department ORDER BY id", function (err, results) {
     if (err) throw err;
     for (let i = 0; i < results.length; i++) {
@@ -238,11 +237,11 @@ const getDepartmentNames = () => {
     return departmentNames;
   });
 };
-getDepartmentNames();
 
 // function to get all department IDs from the database in one array
 let departmentIDs = [];
 const getDepartmentIDs = () => {
+  departmentIDs = [];
   db.query("SELECT id FROM department ORDER BY id", function (err, results) {
     if (err) throw err;
     for (let i = 0; i < results.length; i++) {
@@ -251,7 +250,6 @@ const getDepartmentIDs = () => {
     return departmentIDs;
   });
 };
-getDepartmentIDs();
 
 // questions presented to the user after they select the option to "Add Role"
 const addRoleQuestions = [
@@ -309,7 +307,7 @@ const addRole = () => {
         }
       );
     })
-    .then(() => startQuestions());
+    .then(() => init());
 };
 
 // function to view all departments
@@ -322,7 +320,7 @@ const viewAllDepartments = () => {
       console.table("All Departments:", data);
     }
   );
-  startQuestions();
+  init();
 };
 
 // questions presented to the user when they select the option to "Add Department"
@@ -353,12 +351,13 @@ const addDepartment = () => {
         }
       );
     })
-    .then(() => startQuestions());
+    .then(() => init());
 };
 
 // Function to get all employees from the database to present options to the user through inquirer
 let employees = [];
 const getEmployees = () => {
+  employees = [];
   db.query(
     `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee ORDER BY id`,
     function (err, results) {
@@ -370,7 +369,6 @@ const getEmployees = () => {
     }
   );
 };
-getEmployees();
 
 // questions presented to the user when they select the "Update Employee Role" option
 const updateEmployeeQuestions = [
@@ -413,5 +411,20 @@ const updateEmployeeRole = () => {
       db.query(
         `UPDATE employee SET role_id = ${data[0]} WHERE first_name = '${data[1]}' AND last_name = '${data[2]}'`
       );
-    });
+    })
+    .then(() => init());
 };
+
+init = () => {
+  // call the function to initialize the app
+  startQuestions();
+  getRoleTitles();
+  getRoleIDs();
+  getManagerNames();
+  getManagerIDs();
+  getDepartmentNames();
+  getDepartmentIDs();
+  getEmployees();
+};
+
+init();
