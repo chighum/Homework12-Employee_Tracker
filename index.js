@@ -78,96 +78,100 @@ const viewAllEmployees = () => {
       console.table("Total Staff:", data);
     }
   );
-  init();
+  startQuestions();
 };
-
-// function to get all role titles from database in one array
-let roleTitles = [];
-const getRoleTitles = () => {
-  roleTitles = [];
-  db.query("SELECT title FROM role ORDER BY id", function (err, results) {
-    if (err) throw err;
-    for (let i = 0; i < results.length; i++) {
-      roleTitles.push(results[i].title);
-    }
-    return roleTitles;
-  });
-};
-
-// function to get all role IDs from database in one array
-let roleIDs = [];
-const getRoleIDs = () => {
-  roleIDs = [];
-  db.query("SELECT id FROM role ORDER BY id", function (err, results) {
-    if (err) throw err;
-    for (let i = 0; i < results.length; i++) {
-      roleIDs.push(results[i].id);
-    }
-    return roleIDs;
-  });
-};
-
-// function to get all manager names from database in one array
-let managerNames = [];
-const getManagerNames = () => {
-  managerNames = [];
-  db.query(
-    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL ORDER BY id`,
-    function (err, results) {
-      if (err) throw err;
-      for (let i = 0; i < results.length; i++) {
-        managerNames.push(results[i].name);
-      }
-      return managerNames;
-    }
-  );
-};
-
-// function to get all manager IDs from database in one array
-let managerIDs = [];
-const getManagerIDs = () => {
-  managerIDs = [];
-  db.query(
-    `SELECT id FROM employee WHERE manager_id IS NULL ORDER BY id`,
-    function (err, results) {
-      if (err) throw err;
-      for (let i = 0; i < results.length; i++) {
-        managerIDs.push(results[i].id);
-      }
-      return managerIDs;
-    }
-  );
-};
-
-// questions that will be presented to user after they select "Add Employee" option
-const addEmployeeQuestions = [
-  {
-    type: "input",
-    message: "What is the employee's first name?",
-    name: "firstName",
-  },
-  {
-    type: "input",
-    message: "What is the employee's last name?",
-    name: "lastName",
-  },
-  {
-    type: "list",
-    message: "What is the employee's role",
-    name: "role",
-    choices: roleTitles,
-  },
-  {
-    type: "list",
-    message: "Who is the employee's manager",
-    name: "manager",
-    choices: managerNames,
-  },
-];
 
 // function to run addEmployeeQuestions with inquirer.prompt
 // adds the employee with correct role ID and manager ID from title and name inputs
 const addEmployee = () => {
+  // function to get all role titles from database in one array
+  let roleTitles = [];
+  const getRoleTitles = () => {
+    //roleTitles = [];
+    db.query("SELECT title FROM role ORDER BY id", function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        roleTitles.push(results[i].title);
+      }
+      return roleTitles;
+    });
+  };
+
+  // function to get all role IDs from database in one array
+  let roleIDs = [];
+  const getRoleIDs = () => {
+    //roleIDs = [];
+    db.query("SELECT id FROM role ORDER BY id", function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        roleIDs.push(results[i].id);
+      }
+      return roleIDs;
+    });
+  };
+
+  // function to get all manager names from database in one array
+  let managerNames = [];
+  const getManagerNames = () => {
+    //managerNames = [];
+    db.query(
+      `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL ORDER BY id`,
+      function (err, results) {
+        if (err) throw err;
+        for (let i = 0; i < results.length; i++) {
+          managerNames.push(results[i].name);
+        }
+        return managerNames;
+      }
+    );
+  };
+
+  // function to get all manager IDs from database in one array
+  let managerIDs = [];
+  const getManagerIDs = () => {
+    //managerIDs = [];
+    db.query(
+      `SELECT id FROM employee WHERE manager_id IS NULL ORDER BY id`,
+      function (err, results) {
+        if (err) throw err;
+        for (let i = 0; i < results.length; i++) {
+          managerIDs.push(results[i].id);
+        }
+        return managerIDs;
+      }
+    );
+  };
+
+  getRoleTitles();
+  getRoleIDs();
+  getManagerNames();
+  getManagerIDs();
+
+  // questions that will be presented to user after they select "Add Employee" option
+  const addEmployeeQuestions = [
+    {
+      type: "input",
+      message: "What is the employee's first name?",
+      name: "firstName",
+    },
+    {
+      type: "input",
+      message: "What is the employee's last name?",
+      name: "lastName",
+    },
+    {
+      type: "list",
+      message: "What is the employee's role",
+      name: "role",
+      choices: roleTitles,
+    },
+    {
+      type: "list",
+      message: "Who is the employee's manager",
+      name: "manager",
+      choices: managerNames,
+    },
+  ];
   console.clear();
   inquirer
     .prompt(addEmployeeQuestions)
@@ -209,7 +213,7 @@ const addEmployee = () => {
         }
       );
     })
-    .then(() => init());
+    .then(() => startQuestions());
 };
 
 // function to view all roles with appropriate table join on department id
@@ -222,58 +226,62 @@ const viewAllRoles = () => {
       console.table("All Roles:", data);
     }
   );
-  init();
+  startQuestions();
 };
-
-// function to get all department names from database in one array
-let departmentNames = [];
-const getDepartmentNames = () => {
-  departmentNames = [];
-  db.query("SELECT name FROM department ORDER BY id", function (err, results) {
-    if (err) throw err;
-    for (let i = 0; i < results.length; i++) {
-      departmentNames.push(results[i].name);
-    }
-    return departmentNames;
-  });
-};
-
-// function to get all department IDs from the database in one array
-let departmentIDs = [];
-const getDepartmentIDs = () => {
-  departmentIDs = [];
-  db.query("SELECT id FROM department ORDER BY id", function (err, results) {
-    if (err) throw err;
-    for (let i = 0; i < results.length; i++) {
-      departmentIDs.push(results[i].id);
-    }
-    return departmentIDs;
-  });
-};
-
-// questions presented to the user after they select the option to "Add Role"
-const addRoleQuestions = [
-  {
-    type: "input",
-    message: "What is the title of the role?",
-    name: "title",
-  },
-  {
-    type: "input",
-    message: "What is the role's salary?",
-    name: "salary",
-  },
-  {
-    type: "list",
-    message: "What department is the role in?",
-    name: "department",
-    choices: departmentNames,
-  },
-];
 
 // function to run the addRoleQuestions using inquirer.prompt
 // new role is then added to the database with department id value corresponding to user input for department name
 const addRole = () => {
+  // function to get all department names from database in one array
+  let departmentNames = [];
+  const getDepartmentNames = () => {
+    //departmentNames = [];
+    db.query(
+      "SELECT name FROM department ORDER BY id",
+      function (err, results) {
+        if (err) throw err;
+        for (let i = 0; i < results.length; i++) {
+          departmentNames.push(results[i].name);
+        }
+        return departmentNames;
+      }
+    );
+  };
+
+  // function to get all department IDs from the database in one array
+  let departmentIDs = [];
+  const getDepartmentIDs = () => {
+    //departmentIDs = [];
+    db.query("SELECT id FROM department ORDER BY id", function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        departmentIDs.push(results[i].id);
+      }
+      return departmentIDs;
+    });
+  };
+  getDepartmentNames();
+  getDepartmentIDs();
+
+  // questions presented to the user after they select the option to "Add Role"
+  const addRoleQuestions = [
+    {
+      type: "input",
+      message: "What is the title of the role?",
+      name: "title",
+    },
+    {
+      type: "input",
+      message: "What is the role's salary?",
+      name: "salary",
+    },
+    {
+      type: "list",
+      message: "What department is the role in?",
+      name: "department",
+      choices: departmentNames,
+    },
+  ];
   console.clear();
   inquirer
     .prompt(addRoleQuestions)
@@ -307,7 +315,7 @@ const addRole = () => {
         }
       );
     })
-    .then(() => init());
+    .then(() => startQuestions());
 };
 
 // function to view all departments
@@ -320,7 +328,7 @@ const viewAllDepartments = () => {
       console.table("All Departments:", data);
     }
   );
-  init();
+  startQuestions();
 };
 
 // questions presented to the user when they select the option to "Add Department"
@@ -351,44 +359,73 @@ const addDepartment = () => {
         }
       );
     })
-    .then(() => init());
+    .then(() => startQuestions());
 };
-
-// Function to get all employees from the database to present options to the user through inquirer
-let employees = [];
-const getEmployees = () => {
-  employees = [];
-  db.query(
-    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee ORDER BY id`,
-    function (err, results) {
-      if (err) throw err;
-      for (let i = 0; i < results.length; i++) {
-        employees.push(results[i].name);
-      }
-      return employees;
-    }
-  );
-};
-
-// questions presented to the user when they select the "Update Employee Role" option
-const updateEmployeeQuestions = [
-  {
-    type: "list",
-    message: "Which employee would you like to update?",
-    name: "employee",
-    choices: employees,
-  },
-  {
-    type: "list",
-    message: "What is the employee's new role?",
-    name: "role",
-    choices: roleTitles,
-  },
-];
 
 // function to run the updateEmployeeQuestions using inquirer.prompt
 // and update the correct employee's employee's role_id based on the employee name and role title input
 const updateEmployeeRole = () => {
+  // Function to get all employees from the database to present options to the user through inquirer
+  let employees = [];
+  const getEmployees = () => {
+    //employees = [];
+    db.query(
+      `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee ORDER BY id`,
+      function (err, results) {
+        if (err) throw err;
+        for (let i = 0; i < results.length; i++) {
+          employees.push(results[i].name);
+        }
+        return employees;
+      }
+    );
+  };
+
+  // function to get all role titles from the database in one array
+  let roleTitles = [];
+  const getRoleTitles = () => {
+    //roleTitles = [];
+    db.query("SELECT title FROM role ORDER BY id", function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        roleTitles.push(results[i].title);
+      }
+      return roleTitles;
+    });
+  };
+
+  // function to get all role IDs from database in one array
+  let roleIDs = [];
+  const getRoleIDs = () => {
+    //roleIDs = [];
+    db.query("SELECT id FROM role ORDER BY id", function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        roleIDs.push(results[i].id);
+      }
+      return roleIDs;
+    });
+  };
+
+  getEmployees();
+  getRoleTitles();
+  getRoleIDs();
+
+  // questions presented to the user when they select the "Update Employee Role" option
+  const updateEmployeeQuestions = [
+    {
+      type: "list",
+      message: "Which employee would you like to update?",
+      name: "employee",
+      choices: employees,
+    },
+    {
+      type: "list",
+      message: "What is the employee's new role?",
+      name: "role",
+      choices: roleTitles,
+    },
+  ];
   inquirer
     .prompt(updateEmployeeQuestions)
     .then((response) => {
@@ -412,19 +449,7 @@ const updateEmployeeRole = () => {
         `UPDATE employee SET role_id = ${data[0]} WHERE first_name = '${data[1]}' AND last_name = '${data[2]}'`
       );
     })
-    .then(() => init());
+    .then(() => startQuestions());
 };
 
-init = () => {
-  // call the function to initialize the app
-  startQuestions();
-  getRoleTitles();
-  getRoleIDs();
-  getManagerNames();
-  getManagerIDs();
-  getDepartmentNames();
-  getDepartmentIDs();
-  getEmployees();
-};
-
-init();
+startQuestions();
