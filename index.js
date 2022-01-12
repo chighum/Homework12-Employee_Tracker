@@ -257,15 +257,17 @@ const addDepartment = () => {
 };
 
 // Function to get all employees from the database to present options to the user through inquirer
+let employees = [];
+
 const getEmployees = () => {
   db.query(
-    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL`,
+    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee`,
     function (err, results) {
       if (err) throw err;
       for (let i = 0; i < results.length; i++) {
-        managers.push(results[i].name);
+        employees.push(results[i].name);
       }
-      return managers;
+      return employees;
     }
   );
 };
@@ -274,30 +276,24 @@ getEmployees();
 const updateEmployeeQuestions = [
   {
     type: "list",
-    message: "Which employee would you like to update",
+    message: "Which employee would you like to update?",
     name: "employee",
-    choices: employee,
-  },
-  {
-    type: "input",
-    message: "What is the employee's first name?",
-    name: "firstName",
-  },
-  {
-    type: "input",
-    message: "What is the employee's last name?",
-    name: "lastName",
+    choices: employees,
   },
   {
     type: "list",
-    message: "What is the employee's role",
+    message: "What is the employee's new role?",
     name: "role",
     choices: role,
   },
-  {
-    type: "list",
-    message: "Who is the employee's manager",
-    name: "manager",
-    choices: managers,
-  },
 ];
+
+const updateEmployeeRole = () => {
+  inquirer.prompt(updateEmployeeQuestions).then((response) => {
+    let first_name = response.employee.split(" ")[0];
+    let last_name = response.employee.split(" ")[1];
+    db.query(
+      `UPDATE employee SET role_id = ${response.role} WHERE first_name = ${first_name} AND last_name = ${last_name}`
+    );
+  });
+};
