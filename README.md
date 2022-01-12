@@ -25,6 +25,8 @@ You will have to follow the installation instructions to use this project on you
 
 You can see a step by step video of how to initiate and use the application below:
 
+![User walk through of command line employee tracker application](./images/EmployeeTracker.gif)
+
 ## License
 
 This application is covered under the MIT license.
