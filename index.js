@@ -121,6 +121,7 @@ const addEmployee = () => {
         for (let i = 0; i < results.length; i++) {
           managerNames.push(results[i].name);
         }
+        managerNames.push("null");
         return managerNames;
       }
     );
@@ -189,6 +190,8 @@ const addEmployee = () => {
       for (let i = 0; i < managerIDs.length; i++) {
         if (response.manager === managerNames[i]) {
           managerID = managerIDs[i];
+        } else {
+          managerID = null;
         }
       }
       data.push(first_name);
