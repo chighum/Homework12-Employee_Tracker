@@ -1,5 +1,7 @@
+const { stat } = require("fs");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const { start } = require("repl");
 require("console.table");
 
 // Connect to database
@@ -58,7 +60,9 @@ const startQuestions = () => {
           addDepartment();
           break;
         case "Quit":
-          quit();
+          console.clear();
+          console.log("Goodbye!");
+          db.end();
           break;
       }
     });
@@ -206,8 +210,8 @@ const addEmployee = () => {
           console.table("Total Staff:", data);
         }
       );
-    });
-  startQuestions();
+    })
+    .then(() => startQuestions());
 };
 
 // function to view all roles with appropriate table join on department id
@@ -220,6 +224,7 @@ const viewAllRoles = () => {
       console.table("All Roles:", data);
     }
   );
+  startQuestions();
 };
 
 // function to get all department names from database in one array
@@ -303,8 +308,8 @@ const addRole = () => {
           console.table("All Roles:", data);
         }
       );
-    });
-  startQuestions();
+    })
+    .then(() => startQuestions());
 };
 
 // function to view all departments
@@ -333,20 +338,22 @@ const addDepartmentQuestions = [
 // and add the department to the database
 const addDepartment = () => {
   console.clear();
-  inquirer.prompt(addDepartmentQuestions).then((response) => {
-    db.query("INSERT INTO department SET ?", {
-      name: response.name,
-    });
-    db.query(
-      `SELECT department.id, department.name FROM department ORDER BY department.id`,
-      (err, data) => {
-        if (err) throw err;
+  inquirer
+    .prompt(addDepartmentQuestions)
+    .then((response) => {
+      db.query("INSERT INTO department SET ?", {
+        name: response.name,
+      });
+      db.query(
+        `SELECT department.id, department.name FROM department ORDER BY department.id`,
+        (err, data) => {
+          if (err) throw err;
 
-        console.table("All Departments:", data);
-      }
-    );
-    startQuestions();
-  });
+          console.table("All Departments:", data);
+        }
+      );
+    })
+    .then(() => startQuestions());
 };
 
 // Function to get all employees from the database to present options to the user through inquirer
