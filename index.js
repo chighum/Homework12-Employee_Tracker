@@ -382,6 +382,7 @@ const updateEmployeeRole = () => {
       }
     );
   };
+  getEmployees();
 
   // function to get all role titles from the database in one array
   let roleTitles = [];
@@ -395,6 +396,7 @@ const updateEmployeeRole = () => {
       return roleTitles;
     });
   };
+  getRoleTitles();
 
   // function to get all role IDs from database in one array
   let roleIDs = [];
@@ -408,13 +410,11 @@ const updateEmployeeRole = () => {
       return roleIDs;
     });
   };
-
-  getEmployees();
-  getRoleTitles();
   getRoleIDs();
 
   // questions presented to the user when they select the "Update Employee Role" option
   const updateEmployeeQuestions = [
+    { type: "input", message: "Press enter to continue", name: "stall" },
     {
       type: "list",
       message: "Which employee would you like to update?",
@@ -446,7 +446,6 @@ const updateEmployeeRole = () => {
       return data;
     })
     .then((data) => {
-      console.log(data);
       db.query(
         `UPDATE employee SET role_id = ${data[0]} WHERE first_name = '${data[1]}' AND last_name = '${data[2]}'`
       );
