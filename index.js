@@ -76,6 +76,36 @@ const viewAllEmployees = () => {
   startQuestions();
 };
 
+let role = [];
+
+const getRoles = () => {
+  db.query("SELECT title FROM role", function (err, results) {
+    if (err) throw err;
+    for (let i = 0; i < results.length; i++) {
+      role.push(results[i].title);
+    }
+    return role;
+  });
+};
+
+getRoles();
+
+let managers = [];
+
+const getManagers = () => {
+  db.query(
+    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL`,
+    function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        managers.push(results[i].name);
+      }
+      return managers;
+    }
+  );
+};
+getManagers();
+
 const addEmployeeQuestions = [
   {
     type: "input",
@@ -91,13 +121,13 @@ const addEmployeeQuestions = [
     type: "list",
     message: "What is the employee's role",
     name: "role",
-    choices: [role],
+    choices: role,
   },
   {
     type: "list",
     message: "Who is the employee's manager",
     name: "manager",
-    choices: [managers],
+    choices: managers,
   },
 ];
 
@@ -119,7 +149,7 @@ const addEmployee = () => {
       }
     );
   });
-  startQuestions();
+  //startQuestions();
 };
 
 const viewAllRoles = () => {
@@ -132,6 +162,20 @@ const viewAllRoles = () => {
     }
   );
 };
+
+let department = [];
+
+const getDepartments = () => {
+  db.query("SELECT name FROM department", function (err, results) {
+    if (err) throw err;
+    for (let i = 0; i < results.length; i++) {
+      department.push(results[i].name);
+    }
+    return department;
+  });
+};
+
+getDepartments();
 
 const addRoleQuestions = [
   {
@@ -148,7 +192,7 @@ const addRoleQuestions = [
     type: "list",
     message: "What department is the role in?",
     name: "department",
-    choices: [department],
+    choices: department,
   },
 ];
 
@@ -169,7 +213,7 @@ const addRole = () => {
       }
     );
   });
-  startQuestions();
+  //startQuestions();
 };
 
 // const updateEmployeeRole = () => {};
@@ -177,13 +221,13 @@ const addRole = () => {
 const viewAllDepartments = () => {
   console.clear();
   db.query(
-    `SELECT department.id, department.name FROM department ORDER BY department.id`,
+    `SELECT id, name FROM department ORDER BY department.id`,
     (err, response) => {
       if (err) throw err;
       console.table("All Departments:", response);
     }
   );
-  startQuestions();
+  //startQuestions();
 };
 
 const addDepartmentQuestions = [
@@ -208,6 +252,52 @@ const addDepartment = () => {
         console.table("All Departments:", response);
       }
     );
-    startQuestions();
+    //startQuestions();
   });
 };
+
+// Function to get all employees from the database to present options to the user through inquirer
+const getEmployees = () => {
+  db.query(
+    `SELECT CONCAT (first_name,' ', last_name) AS name FROM employee WHERE manager_id IS NULL`,
+    function (err, results) {
+      if (err) throw err;
+      for (let i = 0; i < results.length; i++) {
+        managers.push(results[i].name);
+      }
+      return managers;
+    }
+  );
+};
+getEmployees();
+
+const updateEmployeeQuestions = [
+  {
+    type: "list",
+    message: "Which employee would you like to update",
+    name: "employee",
+    choices: employee,
+  },
+  {
+    type: "input",
+    message: "What is the employee's first name?",
+    name: "firstName",
+  },
+  {
+    type: "input",
+    message: "What is the employee's last name?",
+    name: "lastName",
+  },
+  {
+    type: "list",
+    message: "What is the employee's role",
+    name: "role",
+    choices: role,
+  },
+  {
+    type: "list",
+    message: "Who is the employee's manager",
+    name: "manager",
+    choices: managers,
+  },
+];
